@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <style>
     #map {
-      height: 100vh;
+      height: 98vh;
       width: 100%;
     }
   </style>
@@ -21,9 +21,9 @@
     const map = L.map('map').setView([0, 0], 13);
 
     // Set up the tile layer (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    //L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //  attribution: '© OpenStreetMap contributors'
+    //}).addTo(map);
 
     // Marker to indicate your location
     const marker = L.marker([0, 0]).addTo(map);
