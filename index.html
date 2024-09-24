@@ -39,7 +39,10 @@
     // Request GPS location from the phone
     function locate() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(updateMap, errorCallback, {
+        navigator.geolocation.getCurrentPosition(updateMap, function(error) {
+          console.log('Error occurred. Error code: ' + error.code);
+          // Handle error cases here, like prompting the user
+          }, {
           enableHighAccuracy: true, timeout: 5000, maximumAge: 0
         });
       } else {
