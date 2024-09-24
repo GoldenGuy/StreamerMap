@@ -3,55 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Location Widget</title>
+  <title>Interactive Location Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <style>
     #map {
       height: 98vh;
       width: 100%;
     }
+    #request-gps-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      padding: 10px;
+      background-color: white;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <!-- Button to manually request GPS permissions -->
+  <button id="request-gps-btn">Enable GPS</button>
+  
+  <!-- Map container -->
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
-    // Initialize the map and set its view to an initial location
-    const map = L.map('map').setView([0, 0], 13);
+    // Initialize the map without zoom buttons
+    const map = L.map('map', {
+      zoomControl: false  // Disable zoom buttons
+    }).setView([0, 0], 13);
 
-    // Set up the tile layer (OpenStreetMap)
+    // OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Marker to indicate your location
-    const marker = L.marker([0, 0]).addTo(map);
+    // Marker for the current location
+    const currentLocationMarker = L.marker([0, 0]).addTo(map).bindPopup("Your location");
 
-    // Function to update the map with the current location
-    function updateMap(position) {
+    // Function to update the marker and map with the current location
+    function updateCurrentLocation(position) {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
+      currentLocationMarker.setLatLng([lat, lng]);
       map.setView([lat, lng], 13);
-      marker.setLatLng([lat, lng]);
     }
 
-    // Request GPS location from the phone
-    function locate() {
+    // Function to request GPS permission
+    function requestGPS() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(updateMap, function(error) {
-          console.log('Error occurred. Error code: ' + error.code);
-          // Handle error cases here, like prompting the user
-          }, {
-          enableHighAccuracy: true, timeout: 5000, maximumAge: 0
-        });
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            // If location is retrieved successfully, update the map
+            updateCurrentLocation(position);
+            // Optionally, start watching for GPS updates
+            navigator.geolocation.watchPosition(updateCurrentLocation);
+          },
+          (error) => {
+            // Handle errors (e.g., if the user denies the permission)
+            alert("GPS permission is denied or an error occurred: " + error.message);
+          }
+        );
       } else {
         alert("Geolocation is not supported by your browser.");
       }
     }
 
-    // Start locating
-    locate();
+    // Attach click event to the button to trigger GPS permission request
+    document.getElementById('request-gps-btn').addEventListener('click', requestGPS);
   </script>
 </body>
 </html>
