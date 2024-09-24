@@ -39,7 +39,9 @@
     // Request GPS location from the phone
     function locate() {
       if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(updateMap);
+        navigator.geolocation.getCurrentPosition(updateMap, errorCallback, {
+          enableHighAccuracy: true, timeout: 5000, maximumAge: 0
+        });
       } else {
         alert("Geolocation is not supported by your browser.");
       }
